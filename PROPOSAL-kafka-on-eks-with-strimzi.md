@@ -42,3 +42,61 @@ On EKS, this provides a repeatable, declarative way to run Kafka 4.x without com
 
     * Broker metrics: request-rate, request-latency, bytes-in/out, disk I/O, queue sizes, ISR count.
     * Client metrics: producer/consumer throughput, error rates, retries, batch sizes.
+   
+
+ ### 2.2 Test Tools
+     * Kafka built-in tools: kafka-producer-perf-test.sh and kafka-consumer-perf-test.sh, packaged in a test “client pod” image.
+​     * Load tools like k6 with xk6-kafka, JMeter, or Gatling for more realistic scenarios and scripting.
+​     * Observability stack: Prometheus + Grafana dashboards for Kafka and Strimzi operator metrics during tests
+
+ ### 2.3 Step-by-step Test Procedure
+     
+    * Baseline cluster setup
+         * Deploy Kafka via Strimzi with production-like configuration (broker count, partitions, replication factor, disk type/size).
+​
+    * Define test scenarios
+         * Use realistic message sizes, partition counts, key distribution, and compression settings that match our workloads.
+​
+    * Run incremental load tests
+         * Start with low load and gradually ramp up QPS/throughput, recording throughput, latency, and resource metrics.
+​         * Push until saturation (e.g., high disk utilization or latency spikes) to determine safe operating headroom.​
+
+    * Stress and failure tests
+         * Simulate broker/node failures (drain a node, kill a broker pod) and observe recovery times and impact on latency.
+​         * Test partition rebalancing, rolling upgrade simulations, and network disturbances where possible.
+​
+    * Analysis and tuning loop
+         * Adjust key Kafka configs (I/O threads, network threads, batch sizes, linger.ms, log.segment.bytes) and rerun tests.​
+         * Document recommended instance types, broker count, max partitions per broker, and expected SLA ranges from these results
+
+## 3. Important Kafka & Strimzi Configuration on EKS
+
+### 3.1 Cluster and Nodegroup Design
+   * Dedicated Kafka nodegroup with:
+       Instance families optimized for network and disk (e.g., m6i/m7i or r6i), spread across 3 AZs.
+       Taints and tolerations so only Kafka workloads schedule on these nodes.
+​
+   * Storage:
+       Use EBS gp3 or io2 with tuned IOPS/throughput (not default gp2).
+​       One PVC per broker; size determined from retention, throughput, and headroom targets.
+### 3.2 Strimzi Kafka CR Key Settings
+
+  * Broker-level settings (in Kafka.spec.kafka.config):
+      * num.network.threads, num.io.threads, log.retention.hours, log.segment.bytes, auto.create.topics.enable, min.insync.replicas.
+​      * Listener configuration (internal vs external listeners, TLS, authentication).
+​
+  * Storage and durability:
+    * replication.factor per topic and min.insync.replicas to tolerate broker loss.
+​    * PodDisruptionBudgets and max unavailable broker settings from Strimzi.
+​
+  * Strimzi features:
+    * Enable Cruise Control for balancing and node draining integration.
+​    * Configure KafkaTopic and KafkaUser CRs to standardize topic defaults and security.
+
+### 3.3 Observability and SLOs
+   * Enable Kafka and Strimzi metrics endpoints, scrape via Prometheus, and create SLOs on availability, latency, and message loss.
+​   * Capture and alert on lag, offline partitions, ISR changes, and disk usage growth.
+
+## 4. KRaft: How It Works and Why Use It
+   * KRaft (Kafka Raft) replaces ZooKeeper with an internal metadata quorum, simplifying the architecture and improving consistency. Kafka 4.x uses KRaft as the default for new clusters, and Strimzi supports KRaft-based deployments.
+​​
