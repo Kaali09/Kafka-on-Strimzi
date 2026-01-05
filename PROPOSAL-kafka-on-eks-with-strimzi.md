@@ -47,7 +47,8 @@ On EKS, this provides a repeatable, declarative way to run Kafka 4.x without com
 
  ### 2.2 Test Tools
  
-     * Kafka built-in tools: kafka-producer-perf-test.sh and kafka-consumer-perf-test.sh, packaged in a test "client pod" image.
+     * Kafka built-in tools: 
+         kafka-producer-perf-test.sh and kafka-consumer-perf-test.sh, packaged in a test "client pod" image.
 ​     * Load tools like k6 with xk6-kafka, JMeter, or Gatling for more realistic scenarios and scripting.
 ​     * Observability stack: Prometheus + Grafana dashboards for Kafka and Strimzi operator metrics during tests
 
