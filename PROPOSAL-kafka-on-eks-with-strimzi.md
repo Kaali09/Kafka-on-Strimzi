@@ -45,7 +45,7 @@ On EKS, this provides a repeatable, declarative way to run Kafka 4.x without com
     * Client metrics: producer/consumer throughput, error rates, retries, batch sizes.
    
 
- ### 2.2 Test Tools
+### 2.2 Test Tools
  
      * Kafka built-in tools: 
          kafka-producer-perf-test.sh and kafka-consumer-perf-test.sh, packaged in a test client pod image.
@@ -54,7 +54,7 @@ On EKS, this provides a repeatable, declarative way to run Kafka 4.x without com
 
 ​     * Observability stack: Prometheus + Grafana dashboards for Kafka and Strimzi operator metrics during tests
 
- ### 2.3 Step-by-step Test Procedure
+### 2.3 Step-by-step Test Procedure
      
     * Baseline cluster setup
     
