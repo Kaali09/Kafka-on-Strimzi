@@ -18,3 +18,14 @@ On EKS, this provides a repeatable, declarative way to run Kafka 4.x without com
       Works with standard EKS primitives (nodegroups, EBS StorageClasses, IAM roles), and is referenced by AWS “Kafka on EKS” blueprints.
 ​      Fits with existing monitoring stack (Prometheus/Grafana) via Kafka and operator metrics.
 ​
+## Disadvantages / Trade-offs
+   * Operator dependency and version coupling
+       Kafka versions are tied to Strimzi releases; upgrading Kafka usually means upgrading Strimzi first, then the Kafka cluster CR.
+​       Extra component to operate and monitor (operator pods, CRDs, image updates).
+​
+   * Feature scope vs. commercial distros
+       Does not include paid features from Confluent/Instaclustr (UI, turnkey connectors, governance features), which may matter for some teams.
+​       Tiered storage and advanced cost-optimization patterns require careful self-implementation and configuration.
+​
+   * Kubernetes complexity
+       Kafka on Kubernetes has storage and noisy-neighbor concerns; it requires careful nodegroup, disk, and network design.
