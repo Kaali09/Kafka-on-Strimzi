@@ -47,37 +47,29 @@ On EKS, this provides a repeatable, declarative way to run Kafka 4.x without com
 
 ### 2.2 Test Tools
  
-     * Kafka built-in tools: 
-         kafka-producer-perf-test.sh and kafka-consumer-perf-test.sh, packaged in a test client pod image.
-         
-​     * Load tools like k6 with xk6-kafka, JMeter, or Gatling for more realistic scenarios and scripting.
-
-​     * Observability stack: Prometheus + Grafana dashboards for Kafka and Strimzi operator metrics during tests
+  * Kafka built-in tools: kafka-producer-perf-test.sh and kafka-consumer-perf-test.sh, packaged in a test client pod image.
+  * Load tools like k6 with xk6-kafka, JMeter, or Gatling for more realistic scenarios and scripting.
+  * Observability stack: Prometheus + Grafana dashboards for Kafka and Strimzi operator metrics during tests
 
 ### 2.3 Step-by-step Test Procedure
      
-    * Baseline cluster setup
-    
-         * Deploy Kafka via Strimzi with production-like configuration (broker count, partitions, replication factor, disk type/size).
+  * Baseline cluster setup
+    * Deploy Kafka via Strimzi with production-like configuration (broker count, partitions, replication factor, disk type/size).
 ​
-    * Define test scenarios
-    
-         * Use realistic message sizes, partition counts, key distribution, and compression settings that match our workloads.
+  * Define test scenarios
+    * Use realistic message sizes, partition counts, key distribution, and compression settings that match our workloads.
 ​
-    * Run incremental load tests
-    
-         * Start with low load and gradually ramp up QPS/throughput, recording throughput, latency, and resource metrics.
-​         * Push until saturation (e.g., high disk utilization or latency spikes) to determine safe operating headroom.​
+  * Run incremental load tests
+    * Start with low load and gradually ramp up QPS/throughput, recording throughput, latency, and resource metrics.
+​    * Push until saturation (e.g., high disk utilization or latency spikes) to determine safe operating headroom.​
 
-    * Stress and failure tests
-    
-         * Simulate broker/node failures (drain a node, kill a broker pod) and observe recovery times and impact on latency.
-​         * Test partition rebalancing, rolling upgrade simulations, and network disturbances where possible.
+  * Stress and failure tests
+    * Simulate broker/node failures (drain a node, kill a broker pod) and observe recovery times and impact on latency.
+​    * Test partition rebalancing, rolling upgrade simulations, and network disturbances where possible.
 ​
-    * Analysis and tuning loop
-    
-         * Adjust key Kafka configs (I/O threads, network threads, batch sizes, linger.ms, log.segment.bytes) and rerun tests.​
-         * Document recommended instance types, broker count, max partitions per broker, and expected SLA ranges from these results
+  * Analysis and tuning loop
+    * Adjust key Kafka configs (I/O threads, network threads, batch sizes, linger.ms, log.segment.bytes) and rerun tests.​
+    * Document recommended instance types, broker count, max partitions per broker, and expected SLA ranges from these results
 
 ## 3. Important Kafka & Strimzi Configuration on EKS
 
